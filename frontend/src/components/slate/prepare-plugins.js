@@ -1,7 +1,8 @@
 import React from 'react';
-import { addMark } from './plugins';
+import { addMark, mention } from './plugins';
 
 const plugins = [
+  mention({ key: '@', list: [] }),
   addMark({ key: 'b', type: 'bold', Component: props => <strong>{props.children}</strong> }),
   addMark({ key: 'ü', type: 'code' , Component: props => <code>{props.children}</code> }),
   addMark({ key: 'i', type: 'italic', Component: props => <em>{props.children}</em> }),

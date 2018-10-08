@@ -68,7 +68,6 @@ export default class SlateEditor extends Component {
     console.log('apply Operations');
     const ops = operations
       .filter(o => o.type !== 'set_selection' && o.type !== 'set_value')
-
     ;
     const { value } = this.state
     const change = value.change().applyOperations(ops);
