@@ -16,6 +16,6 @@ export const mentionPlugin = ({trigger, list}) => ({
 
 // https://www.npmjs.com/package/slate-suggestions
 // https://github.com/draft-js-plugins/draft-js-plugins/blob/master/draft-js-mention-plugin/src/mentionSuggestionsStrategy.js
-//
+//https://www.draft-js-plugins.com/plugin/mention
 //
 //
