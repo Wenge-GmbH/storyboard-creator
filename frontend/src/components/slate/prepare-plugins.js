@@ -2,7 +2,7 @@ import React from 'react';
 import { addMark, mentionPlugin } from './plugins';
 
 const plugins = [
-  mentionPlugin({ trigger: '@', list: [] }),
+  mentionPlugin({ trigger: '@', list: [], supportWhiteSpace: false }),
   addMark({ key: 'b', type: 'bold', Component: props => <strong>{props.children}</strong> }),
   addMark({ key: 'ü', type: 'code' , Component: props => <code>{props.children}</code> }),
   addMark({ key: 'i', type: 'italic', Component: props => <em>{props.children}</em> }),
