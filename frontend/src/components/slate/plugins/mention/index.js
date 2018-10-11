@@ -18,7 +18,7 @@ export const mentionPlugin = ({
     onKeyDown(e, change) {
       const { text } = change.value.blocks.first();
       const match = returnMatch(trigger, text, supportWhiteSpace);
-      console.log(match);
+      // console.log(match, text);
       if(!match) return;
 
       const { keyCode } = e;
