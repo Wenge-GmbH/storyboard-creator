@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
 
-import plugins from './prepare-plugins';
+import { plugins, MentionPortal } from './prepare-plugins';
 
 import axios from 'axios';
 const io = require('socket.io-client');
 const socket = io('/');
+
 
 // progress link
 // https://docs.slatejs.org/walkthroughs/applying-custom-formatting
@@ -33,10 +34,10 @@ const initialValue = Value.fromJSON({
 });
 
 function writeOutAnd(e, change) {
-  if(e.key !== '&') return;
-  e.preventDefault();
-  change.insertText('and');
-  return true;
+  // if(e.key !== '&') return;
+  // e.preventDefault();
+  // change.insertText('and');
+  // return true;
 }
 
 export default class SlateEditor extends Component {
@@ -117,34 +118,14 @@ export default class SlateEditor extends Component {
           onKeyDown={this.onKeyDown}
           renderNode={this.renderNode}
         />
+        <MentionPortal />
       </div>
     )
   }
 }
-
 
 const CodeNode = ({ attributes, children }) => (
   <pre {...attributes}>
     <code>{children}</code>
   </pre>
 )
-
-// const BoldMark= ({ children }) => <strong>{children}</strong>;
-
-
-// const renderMarks = () => ({
-//   renderMark: props => {
-//     switch (props.mark.type) {
-//       case 'bold':
-//         return <strong>{props.children}</strong>
-//       case 'code':
-//         return <code>{props.children}</code>
-//       case 'italic':
-//         return <em>{props.children}</em>
-//       case 'strikethrough':
-//         return <del>{props.children}</del>
-//       case 'underline':
-//         return <u>{props.children}</u>
-//     }
-//   }
-// });

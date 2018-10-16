@@ -2,12 +2,15 @@ import React from 'react';
 import returnMatch from './strategy';
 import Portal from './mention-portal';
 
-const UP_ARROW_KEY = 38;
-const DOWN_ARROW_KEY = 40;
-const ENTER_KEY = 13;
-const RESULT_SIZE = 5;
+import {
+  UP_ARROW_KEY,
+  DOWN_ARROW_KEY,
+  ENTER_KEY,
+  RESULT_SIZE,
+  schema
+} from './consts';
 
-export const mentionPlugin = ({
+export const MentionPlugin = ({
   trigger = '@',
   list = [],
   supportWhiteSpace = false
@@ -16,9 +19,9 @@ export const mentionPlugin = ({
 
   return {
     onKeyDown(e, change) {
-      const { text } = change.value.blocks.first();
-      const match = returnMatch(trigger, text, supportWhiteSpace);
-      // console.log(match, text);
+      // const { text } = change.value.blocks.first();
+      const { value } = change;
+      const match = returnMatch(trigger, value, supportWhiteSpace, e.key);
       if(!match) return;
 
       const { keyCode } = e;
@@ -30,8 +33,20 @@ export const mentionPlugin = ({
       if(keyCode === ENTER_KEY) {
         e.preventDefault()
 
+        // close Portal
+        if (callback.closePortal) {
+          callback.closePortal()
+        }
 
-      };
+        // handle enter key
+        if (callback.onEnter && callback.suggestion !== undefined) {
+          return callback.onEnter(callback.suggestion)
+        }
+      } else {
+        if (callback.onKeyDown) {
+          callback.onKeyDown(keyCode, match[0].replace('@', ''));
+        }
+      }
     },
     MentionPortal: (props) => <Portal
       {...props}
@@ -39,10 +54,10 @@ export const mentionPlugin = ({
         trigger,
         list,
         supportWhiteSpace,
-        callback
+        callback,
       }}
-
-    />
+    />,
+    schema
   };
 }
 

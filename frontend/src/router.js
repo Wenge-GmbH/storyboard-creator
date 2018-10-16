@@ -8,7 +8,7 @@ import MainWrapper from './components/main-wrapper';
 class MainRouter extends Component {
   render() {
     return (
-      <div>
+      <React.Fragment>
         <Route path="/" component={MainWrapper} />
         <Switch>
           <Route path="/storyboard" component={Storyboard} />
@@ -18,7 +18,7 @@ class MainRouter extends Component {
           <PrivateRoute path="/log/success" component={SuccessLog} />
           <PrivateRoute path="/log/error" component={ErrorLog} /> */}
         </Switch>
-      </div>
+      </React.Fragment>
     )
   }
 }
