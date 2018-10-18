@@ -26,12 +26,11 @@ export default class MentionPortal extends Component {
   }
 
   componentDidUpdate() {
-    // this.adjustPosition()
+    this.adjustPosition()
   }
 
   onKeyDown = (keyCode, match) => {
     const { filteredSuggestions } = this.state;
-    // console.log(match);
 
     if(keyCode === DOWN_ARROW_KEY) {
       // check if index exceeds suggestion length
@@ -45,7 +44,6 @@ export default class MentionPortal extends Component {
       // set current suggestion
       // update state with both
     } else {
-      console.log('else');
       if(match === this.state.match) {
         this.openPortal();
         return;
@@ -74,10 +72,17 @@ export default class MentionPortal extends Component {
     })
   }
 
+  adjustPosition = () => {
+    const selection = window.getSelection();
+    if(!selection) return;
+      // console.log(selection.getRangeAt(0));
+    // console.log(selection.anchorNode);
+  }
+
   render() {
     return (
       <Portal open={this.state.open}>
-        <div>asd</div>
+        <div className="portal">I AM THE PORTAL</div>
       </Portal>
     );
   }

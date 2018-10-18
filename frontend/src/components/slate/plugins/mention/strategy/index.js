@@ -2,6 +2,7 @@ import escapeRegExp from 'lodash/escapeRegExp';
 
 import REG_EXP from './defaultRegEx';
 
+// should add const selection = window.getSelection(); support
 export default (trigger, value, supportWhiteSpace, key) => {
   if (!value.startText) {
     return null;
