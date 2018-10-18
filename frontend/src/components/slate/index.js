@@ -3,6 +3,7 @@ import { Editor } from 'slate-react';
 import { Value } from 'slate';
 
 import plugins from './prepare-plugins';
+import HoveringMenu from './plugins/menü';
 
 import axios from 'axios';
 const io = require('socket.io-client');
