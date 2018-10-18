@@ -118,7 +118,9 @@ export default class SlateEditor extends Component {
           onKeyDown={this.onKeyDown}
           renderNode={this.renderNode}
         />
-        <MentionPortal />
+        <MentionPortal
+          editor={this.editor}
+         />
       </div>
     )
   }

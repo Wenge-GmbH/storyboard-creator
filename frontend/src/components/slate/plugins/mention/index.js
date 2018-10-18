@@ -22,7 +22,11 @@ export const MentionPlugin = ({
       // const { text } = change.value.blocks.first();
       const { value } = change;
       const match = returnMatch(trigger, value, supportWhiteSpace, e.key);
-      if(!match) return;
+
+      if(!match) {
+        closePortal(callback);
+        return;
+      };
 
       const { keyCode } = e;
 
@@ -33,17 +37,14 @@ export const MentionPlugin = ({
       if(keyCode === ENTER_KEY) {
         e.preventDefault()
 
-        // close Portal
-        if (callback.closePortal) {
-          callback.closePortal()
-        }
-
+        closePortal(callback);
         // handle enter key
         if (callback.onEnter && callback.suggestion !== undefined) {
           return callback.onEnter(callback.suggestion)
         }
       } else {
         if (callback.onKeyDown) {
+          console.log('onKeyDown');
           callback.onKeyDown(keyCode, match[0].replace('@', ''));
         }
       }
@@ -59,6 +60,12 @@ export const MentionPlugin = ({
     />,
     schema
   };
+}
+
+function closePortal(callback) {
+  if (callback.closePortal) {
+    callback.closePortal()
+  }
 }
 
 // https://www.npmjs.com/package/slate-suggestions
