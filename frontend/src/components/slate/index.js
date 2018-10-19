@@ -2,12 +2,17 @@ import React, { Component } from 'react';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
 
+<<<<<<< HEAD
 import plugins from './prepare-plugins';
 import HoveringMenu from './plugins/menü';
+=======
+import { plugins, MentionPortal } from './prepare-plugins';
+>>>>>>> fd8e258ff65a3f77bba1cddb87ae65f4cd54ae27
 
 import axios from 'axios';
 const io = require('socket.io-client');
 const socket = io('/');
+
 
 // progress link
 // https://docs.slatejs.org/walkthroughs/applying-custom-formatting
@@ -34,49 +39,54 @@ const initialValue = Value.fromJSON({
 });
 
 function writeOutAnd(e, change) {
-  if(e.key !== '&') return;
-  e.preventDefault();
-  change.insertText('and');
-  return true;
+  // if(e.key !== '&') return;
+  // e.preventDefault();
+  // change.insertText('and');
+  // return true;
 }
 
 export default class SlateEditor extends Component {
   state = {
     value: initialValue,
   }
+  editor = React.createRef();
 
-  onChange = (change, options = {}) => {
+  onChange = ({ value, operations }, options = {}) => {
     //https://github.com/ianstormtaylor/slate/blob/master/examples/syncing-operations/index.js
-    const { value, operations } = change;
     this.setState({ value });
-    socket.emit('sync-editor', {
-      operations,
-      state: JSON.stringify(value.toJSON())
-    });
+
+    if(!this.remote) {
+      socket.emit('sync-editor', {
+        operations,
+        state: JSON.stringify(value.toJSON())
+      });
+    }
   }
   componentDidMount() {
     axios.get('/editor-state').then(({data}) => {
-      console.log('axios');
       const actualState = Value.fromJSON(data);
       this.setState({value: actualState})
     })
     socket.on('sync-editor', (ops) => {
-      console.log('as');
       this.applyOperations(ops);
     })
   }
   applyOperations = operations => {
-    console.log('apply Operations');
     const ops = operations
       .filter(o => o.type !== 'set_selection' && o.type !== 'set_value')
     ;
-    const { value } = this.state
-    const change = value.change().applyOperations(ops);
+    console.log(operations);
+    // const { value } = this.state;
+    // const change = value.change().applyOperations(ops);
     // this.onChange(change, { remote: true })
-    this.setState({value: change.value})
+    // this.setState({value: change.value})
+
+    this.remote = true;
+    this.editor.change(change => change.applyOperations(ops));
+    this.remote = false;
   }
 
-  onKeyDown = (e, change) => {
+  onKeyDown = (e, change, next, asd) => {
     writeOutAnd(e, change);
     if (!e.ctrlKey) return;
     switch (e.key) {
@@ -93,10 +103,12 @@ export default class SlateEditor extends Component {
     }
   }
 
-  renderNode = props => {
+  renderNode = (props) => {
     switch (props.node.type) {
       case 'code':
         return <CodeNode {...props} />;
+      default:
+        return null;
     }
   }
 
@@ -104,40 +116,23 @@ export default class SlateEditor extends Component {
     return (
       <div className="editor">
         <Editor
+          ref={this.editor}
           plugins={plugins}
           value={this.state.value}
           onChange={this.onChange}
           onKeyDown={this.onKeyDown}
           renderNode={this.renderNode}
         />
+        <MentionPortal
+          editor={this.editor}
+         />
       </div>
     )
   }
 }
-
 
 const CodeNode = ({ attributes, children }) => (
   <pre {...attributes}>
     <code>{children}</code>
   </pre>
 )
-
-// const BoldMark= ({ children }) => <strong>{children}</strong>;
-
-
-// const renderMarks = () => ({
-//   renderMark: props => {
-//     switch (props.mark.type) {
-//       case 'bold':
-//         return <strong>{props.children}</strong>
-//       case 'code':
-//         return <code>{props.children}</code>
-//       case 'italic':
-//         return <em>{props.children}</em>
-//       case 'strikethrough':
-//         return <del>{props.children}</del>
-//       case 'underline':
-//         return <u>{props.children}</u>
-//     }
-//   }
-// });

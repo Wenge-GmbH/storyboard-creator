@@ -11,6 +11,7 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
+const port = process.env.PORT || 3001;
 const staticDirectory = path.join(__dirname, '../storyboard-creator-frontend/build');
 
 app.use(express.json({type: '*/*'}));
@@ -33,6 +34,6 @@ io.on('connection', (socket) => {
   })
 })
 
-server.listen(3001, () => {
-  console.log('server is startet on port 3001');
+server.listen(port, () => {
+  console.log(`server is startet on port: ${port}`);
 })
