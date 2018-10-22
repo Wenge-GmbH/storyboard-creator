@@ -2,12 +2,8 @@ import React, { Component } from 'react';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
 
-<<<<<<< HEAD
-import plugins from './prepare-plugins';
-import HoveringMenu from './plugins/menü';
-=======
 import { plugins, MentionPortal } from './prepare-plugins';
->>>>>>> fd8e258ff65a3f77bba1cddb87ae65f4cd54ae27
+import HoverMenu from './plugins/menü';
 
 import axios from 'axios';
 const io = require('socket.io-client');
@@ -18,24 +14,75 @@ const socket = io('/');
 // https://docs.slatejs.org/walkthroughs/applying-custom-formatting
 
 const initialValue = Value.fromJSON({
-  document: {
-    nodes: [
+  "document": {
+    "nodes": [
       {
-        object: 'block',
-        type: 'paragraph',
-        nodes: [
+        "object": "block",
+        "type": "paragraph",
+        "nodes": [
           {
-            object: 'text',
-            leaves: [
+            "object": "text",
+            "leaves": [
               {
-                text: 'Type here:>',
+                "text":
+                  "This example shows how you can make a hovering menu appear above your content, which you can use to make text "
               },
-            ],
-          },
-        ],
+              {
+                "text": "bold",
+                "marks": [
+                  {
+                    "type": "bold"
+                  }
+                ]
+              },
+              {
+                "text": ", "
+              },
+              {
+                "text": "italic",
+                "marks": [
+                  {
+                    "type": "italic"
+                  }
+                ]
+              },
+              {
+                "text": ", or anything else you might want to do!"
+              }
+            ]
+          }
+        ]
       },
-    ],
-  },
+      {
+        "object": "block",
+        "type": "paragraph",
+        "nodes": [
+          {
+            "object": "text",
+            "leaves": [
+              {
+                "text": "Try it out yourself! Just "
+              },
+              {
+                "text": "select any piece of text and the menu will appear",
+                "marks": [
+                  {
+                    "type": "bold"
+                  },
+                  {
+                    "type": "italic"
+                  }
+                ]
+              },
+              {
+                "text": "."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
 });
 
 function writeOutAnd(e, change) {
@@ -70,7 +117,13 @@ export default class SlateEditor extends Component {
     socket.on('sync-editor', (ops) => {
       this.applyOperations(ops);
     })
+    this.updateMenu()
   }
+
+  componentDidUpdate = () => {
+    this.updateMenu()
+  }
+
   applyOperations = operations => {
     const ops = operations
       .filter(o => o.type !== 'set_selection' && o.type !== 'set_value')
@@ -103,6 +156,30 @@ export default class SlateEditor extends Component {
     }
   }
 
+  updateMenu = () => {
+    const menu = this.menu
+    if (!menu) return
+
+    const { value } = this.state
+    const { fragment, selection } = value
+
+    if (selection.isBlurred || selection.isCollapsed || fragment.text === '') {
+      menu.removeAttribute('style')
+      return
+    }
+
+    const native = window.getSelection()
+    const range = native.getRangeAt(0)
+    const rect = range.getBoundingClientRect()
+    menu.style.opacity = 1
+    menu.style.top = `${rect.top + window.pageYOffset - menu.offsetHeight}px`
+
+    menu.style.left = `${rect.left +
+      window.pageXOffset -
+      menu.offsetWidth / 2 +
+      rect.width / 2}px`
+  }
+
   renderNode = (props) => {
     switch (props.node.type) {
       case 'code':
@@ -113,6 +190,7 @@ export default class SlateEditor extends Component {
   }
 
   render() {
+    console.log(this.state.value);
     return (
       <div className="editor">
         <Editor
@@ -125,9 +203,28 @@ export default class SlateEditor extends Component {
         />
         <MentionPortal
           editor={this.editor}
-         />
+        />
+        <HoverMenu innerRef={menu => (this.menu = menu)} editor={this.editor} />
       </div>
     )
+  }
+
+
+  renderMark = (props, next) => {
+    const { children, mark, attributes } = props
+
+    switch (mark.type) {
+      case 'bold':
+        return <strong {...attributes}>{children}</strong>
+      case 'code':
+        return <code {...attributes}>{children}</code>
+      case 'italic':
+        return <em {...attributes}>{children}</em>
+      case 'underlined':
+        return <u {...attributes}>{children}</u>
+      default:
+        return next()
+    }
   }
 }
 
