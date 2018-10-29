@@ -1,5 +1,5 @@
 import React from 'react';
-import returnMatch from './strategy';
+import getInput from './strategy';
 import Portal from './mention-portal';
 
 import {
@@ -7,7 +7,6 @@ import {
   DOWN_ARROW_KEY,
   ENTER_KEY,
   RESULT_SIZE,
-  schema
 } from './consts';
 
 export const MentionPlugin = ({
@@ -21,9 +20,9 @@ export const MentionPlugin = ({
     onKeyDown(e, change) {
       // const { text } = change.value.blocks.first();
       const { value } = change;
-      const match = returnMatch(trigger, value, supportWhiteSpace, e.key);
+      const input = getInput(trigger, value, supportWhiteSpace, e.key);
 
-      if(!match) {
+      if(!input) {
         closePortal(callback);
         return;
       };
@@ -45,7 +44,7 @@ export const MentionPlugin = ({
       } else {
         if (callback.onKeyDown) {
           console.log('onKeyDown');
-          callback.onKeyDown(keyCode, match[0].replace('@', ''));
+          callback.onKeyDown(keyCode, input[0].replace('@', ''));
         }
       }
     },
@@ -57,8 +56,7 @@ export const MentionPlugin = ({
         supportWhiteSpace,
         callback,
       }}
-    />,
-    schema
+    />
   };
 }
 

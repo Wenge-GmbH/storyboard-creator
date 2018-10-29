@@ -2,13 +2,3 @@ export const UP_ARROW_KEY = 38;
 export const DOWN_ARROW_KEY = 40;
 export const ENTER_KEY = 13;
 export const RESULT_SIZE = 5;
-
-export const USER_MENTION_TYPE = 'userMention';
-
-export const schema = {
-  inline: {
-    [USER_MENTION_TYPE]: {
-      isVoid: true, 
-    }
-  }
-}

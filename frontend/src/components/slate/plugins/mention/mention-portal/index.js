@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import Portal from './portal';
+import Suggestions from './suggestions';
 import {
   UP_ARROW_KEY,
   DOWN_ARROW_KEY,
@@ -13,23 +14,29 @@ export default class MentionPortal extends Component {
     super();
     callback.onKeyDown = this.onKeyDown;
     callback.closePortal = this.closePortal;
+    callback.openPortal = this.openPortal;
   }
 
   state = {
     filteredSuggestions: [],
     selectedIndex: 0,
     open: false,
+    pos: {
+      x: 0,
+      y: 0,
+    }
   }
 
   componentDidMount() {
-    // this.adjustPosition()
+    this.positionPortal()
   }
 
   componentDidUpdate() {
-    this.adjustPosition()
+    // if(this.state.input)
+    //   this.positionPortal()
   }
 
-  onKeyDown = (keyCode, match) => {
+  onKeyDown = (keyCode, input) => {
     const { filteredSuggestions } = this.state;
 
     if(keyCode === DOWN_ARROW_KEY) {
@@ -43,20 +50,21 @@ export default class MentionPortal extends Component {
       // update selected index
       // set current suggestion
       // update state with both
-    } else {
-      if(match === this.state.match) {
-        this.openPortal();
-        return;
-      }
-      this.setState({
-        match
-      }, this.openPortal)
+    } else if(input === this.state.input) {
+      this.openPortal();
+      return;
     }
+
+    this.setState({
+      input
+    }, this.openPortal)
   }
 
   openPortal = () => {
     const { open } = this.state;
     if(open) return;
+
+    this.positionPortal();
 
     this.setState({
       open: true
@@ -72,17 +80,33 @@ export default class MentionPortal extends Component {
     })
   }
 
-  adjustPosition = () => {
+  positionPortal = () => {
     const selection = window.getSelection();
-    if(!selection) return;
-      // console.log(selection.getRangeAt(0));
-    // console.log(selection.anchorNode);
+    if(!selection || selection.rangeCount === 0) return;
+    console.log(this.state.input);
+    const range = selection.getRangeAt(0).cloneRange();
+    console.log(range);
+    const test = range.startContainer.lastIndexOf(this.props.trigger)
+    console.log(range.startContainer);
+    console.log(range.startOffset);
+    range.setStart(range.startContainer, test)
+    const rect = selection.getRangeAt(0).getBoundingClientRect();
+    const pos = {};
+    console.log(rect);
+    this.setState({
+      pos: {
+        y: rect.y,
+        x: rect.x
+      }
+    })
   }
 
   render() {
     return (
       <Portal open={this.state.open}>
-        <div className="portal">I AM THE PORTAL</div>
+        <Suggestions pos={this.state.pos}>
+          I AM THE PORTAL
+        </Suggestions>
       </Portal>
     );
   }

@@ -14,6 +14,7 @@ export default (trigger, value, supportWhiteSpace, key) => {
   let textBefore = value.startText.text.slice(0, startOffset) + addKey;
 
   // remove key if backspace was pressed
+  // -> needed to get the portal to render again after delete
   if(key === 'Backspace') {
     textBefore = textBefore.substring(0, textBefore.length - 1);
   }

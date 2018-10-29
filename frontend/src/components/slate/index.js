@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { Editor } from 'slate-react';
 import { Value } from 'slate';
+import axios from 'axios';
+
 
 import { plugins, MentionPortal } from './prepare-plugins';
+import initialValue  from './initial-value';
 
-import axios from 'axios';
 const io = require('socket.io-client');
 const socket = io('/');
 
@@ -12,26 +14,6 @@ const socket = io('/');
 // progress link
 // https://docs.slatejs.org/walkthroughs/applying-custom-formatting
 
-const initialValue = Value.fromJSON({
-  document: {
-    nodes: [
-      {
-        object: 'block',
-        type: 'paragraph',
-        nodes: [
-          {
-            object: 'text',
-            leaves: [
-              {
-                text: 'Type here:>',
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-});
 
 function writeOutAnd(e, change) {
   // if(e.key !== '&') return;
