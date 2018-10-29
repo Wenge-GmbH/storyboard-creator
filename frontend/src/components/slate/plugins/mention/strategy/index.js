@@ -10,6 +10,7 @@ export default (trigger, value, supportWhiteSpace, key) => {
   const startOffset = value.selection.start.offset;
 
   // add current pressed key (cuz fk that keyDown event :|)
+  // PS THIS IS NOT AN OPTIMAL SOLUTION 
   const addKey = key.length === 1 ? key : '';
   let textBefore = value.startText.text.slice(0, startOffset) + addKey;
 

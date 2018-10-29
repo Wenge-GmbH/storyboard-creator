@@ -83,19 +83,24 @@ export default class MentionPortal extends Component {
   positionPortal = () => {
     const selection = window.getSelection();
     if(!selection || selection.rangeCount === 0) return;
-    console.log(this.state.input);
+    // console.log(this.state.input);
     const range = selection.getRangeAt(0).cloneRange();
-    console.log(range);
-    const test = range.startContainer.lastIndexOf(this.props.trigger)
-    console.log(range.startContainer);
-    console.log(range.startOffset);
+
+    let test  = range.startContainer.data.lastIndexOf(this.props.trigger);
+    if(test === -1) {
+      test = range.startOffset - 1;
+    }
+    console.log(test);
     range.setStart(range.startContainer, test)
-    const rect = selection.getRangeAt(0).getBoundingClientRect();
+    const rect = range.getBoundingClientRect();
+
+    console.log(rect);
+
     const pos = {};
     console.log(rect);
     this.setState({
       pos: {
-        y: rect.y,
+        y: rect.y + rect.height + 3,
         x: rect.x
       }
     })
