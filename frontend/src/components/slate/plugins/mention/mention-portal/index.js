@@ -32,8 +32,7 @@ export default class MentionPortal extends Component {
   }
 
   componentDidUpdate() {
-    // if(this.state.input)
-    //   this.positionPortal()
+
   }
 
   onKeyDown = (keyCode, input) => {
@@ -64,10 +63,10 @@ export default class MentionPortal extends Component {
     const { open } = this.state;
     if(open) return;
 
-    this.positionPortal();
-
     this.setState({
       open: true
+    }, () => {
+      this.positionPortal();
     })
   }
 
@@ -85,19 +84,14 @@ export default class MentionPortal extends Component {
     if(!selection || selection.rangeCount === 0) return;
     // console.log(this.state.input);
     const range = selection.getRangeAt(0).cloneRange();
-
-    let test  = range.startContainer.data.lastIndexOf(this.props.trigger);
+    let test = range.startContainer.data.lastIndexOf(this.props.trigger);
     if(test === -1) {
-      test = range.startOffset - 1;
+      test = range.startOffset;
     }
-    console.log(test);
+    console.log(range.commonAncestorContainer.data);
     range.setStart(range.startContainer, test)
     const rect = range.getBoundingClientRect();
-
-    console.log(rect);
-
     const pos = {};
-    console.log(rect);
     this.setState({
       pos: {
         y: rect.y + rect.height + 3,
@@ -109,7 +103,7 @@ export default class MentionPortal extends Component {
   render() {
     return (
       <Portal open={this.state.open}>
-        <Suggestions pos={this.state.pos}>
+        <Suggestions pos={this.state.pos} open={this.state.open}>
           I AM THE PORTAL
         </Suggestions>
       </Portal>

@@ -21,7 +21,7 @@ export const MentionPlugin = ({
       // const { text } = change.value.blocks.first();
       const { value } = change;
       const input = getInput(trigger, value, supportWhiteSpace, e.key);
-
+      console.log(input);
       if(!input) {
         closePortal(callback);
         return;
@@ -43,8 +43,7 @@ export const MentionPlugin = ({
         }
       } else {
         if (callback.onKeyDown) {
-          console.log('onKeyDown');
-          callback.onKeyDown(keyCode, input[0].replace('@', ''));
+          callback.onKeyDown(keyCode, input.replace('@', ''));
         }
       }
     },

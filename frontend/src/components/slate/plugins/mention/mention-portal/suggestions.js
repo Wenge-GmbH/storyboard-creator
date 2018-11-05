@@ -8,7 +8,8 @@ const SuggestionStyles = {
 const Suggestions = ({
   className = '',
   pos,
-  children
+  children,
+  open
 }) => {
   if(!pos) return null;
   return (

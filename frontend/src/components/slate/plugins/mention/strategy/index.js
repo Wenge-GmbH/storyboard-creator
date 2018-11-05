@@ -10,7 +10,7 @@ export default (trigger, value, supportWhiteSpace, key) => {
   const startOffset = value.selection.start.offset;
 
   // add current pressed key (cuz fk that keyDown event :|)
-  // PS THIS IS NOT AN OPTIMAL SOLUTION 
+  // PS THIS IS NOT AN OPTIMAL SOLUTION
   const addKey = key.length === 1 ? key : '';
   let textBefore = value.startText.text.slice(0, startOffset) + addKey;
 
@@ -27,8 +27,8 @@ export default (trigger, value, supportWhiteSpace, key) => {
   ;
 
   // get the result of matching with the RegExp
-  const result = textBefore.match(MENTION_REGEX);
-
+  let result = textBefore.match(MENTION_REGEX);
+  result = result ? result[result.length - 1] : result;
   // prevent searching after whitespace if whitespaces arent supported
   if(!supportWhiteSpace && !textBefore.endsWith(result)) {
     return null;
