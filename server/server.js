@@ -29,6 +29,7 @@ app.get('/editor-state', (req, res) => {
 
 io.on('connection', (socket) => {
   socket.on('sync-editor', ({operations, state}) => {
+    console.log(operations);
     editorState = state;
     socket.broadcast.emit('sync-editor', operations);
   })

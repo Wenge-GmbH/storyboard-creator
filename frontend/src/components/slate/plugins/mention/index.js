@@ -17,14 +17,14 @@ export const MentionPlugin = ({
   const callback = {};
 
   return {
-    onKeyDown(e, change) {
+    onKeyDown(e, change, next) {
       // const { text } = change.value.blocks.first();
       const { value } = change;
       const input = getInput(trigger, value, supportWhiteSpace, e.key);
-      console.log(input);
+
       if(!input) {
         closePortal(callback);
-        return;
+        return next();
       };
 
       const { keyCode } = e;
@@ -39,12 +39,14 @@ export const MentionPlugin = ({
         closePortal(callback);
         // handle enter key
         if (callback.onEnter && callback.suggestion !== undefined) {
-          return callback.onEnter(callback.suggestion)
+          // return callback.onEnter(callback.suggestion);
         }
       } else {
         if (callback.onKeyDown) {
           callback.onKeyDown(keyCode, input.replace('@', ''));
+          console.log(input);
         }
+        return next();
       }
     },
     MentionPortal: (props) => <Portal

@@ -24,35 +24,57 @@ function writeOutAnd(e, change) {
 
 export default class SlateEditor extends Component {
   state = {
-    value: initialValue,
+    value: null,
   }
-  editor = React.createRef();
+  // editor = React.createRef();
 
-  onChange = ({ value, operations }, options = {}) => {
+  onChange = ({ value, operations }) => {
     //https://github.com/ianstormtaylor/slate/blob/master/examples/syncing-operations/index.js
     this.setState({ value });
 
     if(!this.remote) {
+      const ops = this.getOperations();
+
       socket.emit('sync-editor', {
         operations,
         state: JSON.stringify(value.toJSON())
       });
     }
   }
+
+  // gotta syncronicing
+  getOperations = () => {
+
+  }
+
   componentDidMount() {
     axios.get('/editor-state').then(({data}) => {
+      console.log(data);
+      if(data.document.nodes.length === 0) {
+        this.setState({ value: initialValue });
+        return;
+      };
       const actualState = Value.fromJSON(data);
-      this.setState({value: actualState})
+      this.setState({ value: actualState })
     })
     socket.on('sync-editor', (ops) => {
       this.applyOperations(ops);
     })
   }
+
   applyOperations = operations => {
     const ops = operations
-      .filter(o => o.type !== 'set_selection' && o.type !== 'set_value')
+      .filter(
+        o =>
+        o.type !== 'set_selection' &&
+        o.type !== 'set_value' &&
+        (!o.data || !o.data.has('source'))
+      )
+      .toJS()
+      .map(o => ({...o, data: {source: socket.id}}))
+
     ;
-    console.log(operations);
+    console.log('apply Operations');
     // const { value } = this.state;
     // const change = value.change().applyOperations(ops);
     // this.onChange(change, { remote: true })
@@ -63,9 +85,9 @@ export default class SlateEditor extends Component {
     this.remote = false;
   }
 
-  onKeyDown = (e, change, next, asd) => {
-    writeOutAnd(e, change);
-    if (!e.ctrlKey) return;
+  onKeyDown = (e, change, next) => {
+    // writeOutAnd(e, change);
+    if (!e.ctrlKey) return next();
     switch (e.key) {
       // When "`" is pressed, keep our existing code block logic.
       case '+': {
@@ -73,10 +95,10 @@ export default class SlateEditor extends Component {
         // Determine whether any of the currently selected blocks are code blocks.
         const isCode = change.value.blocks.some(block => block.type === 'code')
         change.setBlocks(isCode ? 'paragraph' : 'code');
-        return true;
+        return next();
       }
       default:
-        return;
+        return next();
     }
   }
 
@@ -90,15 +112,17 @@ export default class SlateEditor extends Component {
   }
 
   render() {
+    if(!this.state.value) return <div>loading...</div>;
+
     return (
       <div className="editor">
         <Editor
-          ref={this.editor}
+          // ref={this.editor}
           plugins={plugins}
           value={this.state.value}
           onChange={this.onChange}
           onKeyDown={this.onKeyDown}
-          renderNode={this.renderNode}
+          // renderNode={this.renderNode}
         />
         <MentionPortal
           editor={this.editor}

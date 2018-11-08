@@ -1,8 +1,8 @@
 import React from 'react';
 
 export const addMark = ({type, key, Component}) => ({
-    onKeyDown(e, change) {
-      if (!e.ctrlKey || e.key !== key) return;
+    onKeyDown(e, change, next) {
+      if (!e.ctrlKey || e.key !== key) return next();
       e.preventDefault()
       change.toggleMark(type)
       return true
