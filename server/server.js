@@ -3,7 +3,6 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const gm = require('gm');
 const _ = require('lodash');
-const sharp = require('sharp');
 const path = require('path');
 
 const express = require('express');
