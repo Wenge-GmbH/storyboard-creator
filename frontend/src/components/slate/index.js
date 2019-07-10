@@ -50,7 +50,7 @@ export default class SlateEditor extends Component {
   componentDidMount() {
     axios.get('/editor-state').then(({data}) => {
       console.log(data);
-      if(data.document.nodes.length === 0) {
+      if(!data || data.document.nodes.length === 0) {
         this.setState({ value: initialValue });
         return;
       };
