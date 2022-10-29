@@ -18,7 +18,7 @@
     "reselect": "^3.0.1",
     "slate": "^0.40.2",
     "slate-react": "^0.18.5",
-    "socket.io-client": "^2.1.1"
+    "socket.io-client": "^2.5.0"
   },
   "scripts": {
     "start": "react-scripts start",
